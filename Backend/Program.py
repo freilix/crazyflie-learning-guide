@@ -1,6 +1,5 @@
 from Backend import Element
 from Backend import LoopElement
-from Backend import SimpleElement
 import time
 import cflib.crtp
 from cflib.crazyflie.log import LogConfig
