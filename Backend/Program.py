@@ -1,12 +1,12 @@
-import Element
-import LoopElement
-import SimpleElement
+from Backend import Element
+from Backend import LoopElement
+from Backend import SimpleElement
 import time
 import cflib.crtp
 from cflib.crazyflie.log import LogConfig
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.crazyflie.syncLogger import SyncLogger
-import SequenceList
+from Backend import SequenceList
 
 uri = 'radio://0/80/2M' #TODO
 sequenceList = SequenceList()
