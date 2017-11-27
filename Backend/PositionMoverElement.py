@@ -3,11 +3,11 @@ from cflib.crazyflie import Crazyflie
 
 @Element.register
 class PositionMoverElement(Element):
-    def __init__(self, pOffsetX, pOffsetY, pOffsetZ):
+    def __init__(self, pPositionX, pPositionY, pPositionZ):
         Element.__init__(self)
-        self.positionX = pOffsetX
-        self.positionY = pOffsetY
-        self.positionZ = pOffsetZ
+        self.positionX = pPositionX
+        self.positionY = pPositionY
+        self.positionZ = pPositionZ
 
     def run(self, crazyflie):
         cf = crazyflie
