@@ -35,6 +35,7 @@ class TestRunner():
     crazyflie.open_link(available[0][0])
     status = crazyflie.state
     # crazyflie.console
+    crazyflie.param.set_value('flightmode.posSet', '1')
 
     moveElement = PositionMoverElement(2.5, 2.5, 1.2)
     sList = SequenceList()
