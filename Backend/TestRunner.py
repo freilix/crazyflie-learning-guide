@@ -1,10 +1,9 @@
 import time
-from cflib.crazyflie import Crazyflie
-from cflib.crazyflie import Commander
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from Backend.SequenceList import SequenceList
 from Backend.PositionMoverElement import PositionMoverElement
 import cflib.crtp
+from Backend.ResetEstimator import ResetEstimator
 
 class TestRunner():
     def run_sequence(scf, sequence):
@@ -30,14 +29,17 @@ class TestRunner():
     cflib.crtp.init_drivers()
     available = cflib.crtp.scan_interfaces()
     print(available)
-    # firstInterface = available[0][0]
-    crazyflie = Crazyflie()
-    crazyflie.open_link(available[0][0])
-    status = crazyflie.state
-    # crazyflie.console
-    crazyflie.param.set_value('flightmode.posSet', '1')
 
-    moveElement = PositionMoverElement(2.5, 2.5, 1.2)
+    syncCrazyflie = SyncCrazyflie(available[0][0])
+    syncCrazyflie.open_link()
+
+    ResetEstimator.reset_estimator(syncCrazyflie)
+
+    print("set flightmode")
+    syncCrazyflie.param.set_value('flightmode.posSet', '1')
+    print("flightmode set")
+
+    moveElement1 = PositionMoverElement(0.5, 0.5, 1)
     sList = SequenceList()
-    sList.add(moveElement)
-    sList.run(crazyflie)
+    sList.add(moveElement1)
+    sList.run(syncCrazyflie)
