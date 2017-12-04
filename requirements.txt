@@ -1,1 +1,2 @@
+PyQt5
 pyusb>=1.0.0b2
