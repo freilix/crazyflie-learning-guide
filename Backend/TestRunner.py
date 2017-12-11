@@ -1,9 +1,11 @@
 import time
-from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
-from Backend.SequenceList import SequenceList
-from Backend.PositionMoverElement import PositionMoverElement
+
 import cflib.crtp
+from Backend.Elements.PositionMoverElement import PositionMoverElement
 from Backend.ResetEstimator import ResetEstimator
+from Backend.SequenceList import SequenceList
+from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+
 
 class TestRunner():
     def run_sequence(scf, sequence):

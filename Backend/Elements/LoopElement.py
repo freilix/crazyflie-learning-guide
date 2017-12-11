@@ -1,4 +1,4 @@
-from Backend.Element import Element
+from Backend.Elements.Element import Element
 
 @Element.register
 class LoopElement(Element):
