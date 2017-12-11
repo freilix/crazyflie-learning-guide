@@ -1,6 +1,7 @@
 import time
 
 from Backend.Elements.Element import Element
+from Backend.GlobalPosition import GlobalPosition as GP
 
 
 @Element.register
@@ -13,9 +14,12 @@ class PositionMoverElement(Element):
         self.yaw = pYaw
 
     def run(self, crazyflie):
-        cf = crazyflie
-
-        for i in range(50):
-            cf.commander.send_setpoint(self.positionY, self.positionX, self.yaw, int(self.positionZ * 1000))
-            print(i)
-            time.sleep(0.1)
+        GP.PositionX = self.positionX
+        GP.PositionY = self.positionY
+        GP.PositionZ = self.positionZ
+        GP.PositionYaw = self.yaw
+        time.sleep(5)
+# for i in range(50):
+# cf.commander.send_setpoint(self.positionY, self.positionX, self.yaw, int(self.positionZ * 1000))
+# print(i)
+# time.sleep(0.1)

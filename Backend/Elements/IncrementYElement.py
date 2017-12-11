@@ -1,17 +1,13 @@
 import time
-
 from Backend.Elements.Element import Element
-
+from Backend.GlobalPosition import GlobalPosition as GP
 
 @Element.register
 class IncrementYElement(Element):
     def __init__(self, offsetY):
         Element.__init__(self)
-        self.positionX = offsetY
+        self.positionY = offsetY
 
-    def run(self, crazyflie):
-        cf = crazyflie
-
-        for i in range(50):
-            print(i)
-            time.sleep(0.1)
+    def run(self, cf):
+        GP.PositionY += self.positionY
+        time.sleep(5)

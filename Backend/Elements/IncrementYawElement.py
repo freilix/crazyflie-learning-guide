@@ -1,17 +1,13 @@
 import time
-
 from Backend.Elements.Element import Element
-
+from Backend.GlobalPosition import GlobalPosition as GP
 
 @Element.register
 class IncrementYawElement(Element):
     def __init__(self, offsetYaw):
         Element.__init__(self)
-        self.positionX = offsetYaw
+        self.positionYaw = offsetYaw
 
-    def run(self, crazyflie):
-        cf = crazyflie
-
-        for i in range(50):
-            print(i)
-            time.sleep(0.1)
+    def run(self, cf):
+        GP.PositionYaw += self.positionYaw
+        time.sleep(5)

@@ -1,7 +1,6 @@
 import time
-
 from Backend.Elements.Element import Element
-
+from Backend.GlobalPosition import GlobalPosition as GP
 
 @Element.register
 class IncrementXElement(Element):
@@ -9,9 +8,6 @@ class IncrementXElement(Element):
         Element.__init__(self)
         self.positionX = offsetX
 
-    def run(self, crazyflie):
-        cf = crazyflie
-
-        for i in range(50):
-            print(i)
-            time.sleep(0.1)
+    def run(self, cf):
+        GP.PositionX += self.positionX
+        time.sleep(5)
