@@ -36,10 +36,12 @@ class TestRunner():
     ResetEstimator.reset_estimator(syncCrazyflie)
 
     print("set flightmode")
-    syncCrazyflie.param.set_value('flightmode.posSet', '1')
+    syncCrazyflie.cf.param.set_value('flightmode.posSet', '1')
     print("flightmode set")
 
-    moveElement1 = PositionMoverElement(0.5, 0.5, 1)
+    moveElement1 = PositionMoverElement(1, 1, 1)
+    moveElement2 = PositionMoverElement(1, 2, 1)
     sList = SequenceList()
     sList.add(moveElement1)
-    sList.run(syncCrazyflie)
+    sList.add(moveElement2)
+    sList.run(syncCrazyflie.cf)

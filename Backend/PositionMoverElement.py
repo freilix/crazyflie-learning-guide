@@ -1,3 +1,4 @@
+import time
 from Backend.Element import Element
 from cflib.crazyflie import Crazyflie
 
@@ -11,6 +12,10 @@ class PositionMoverElement(Element):
 
     def run(self, crazyflie):
         cf = crazyflie
-        cf.commander.send_setpoint(self.positionX, self.positionY, self.positionZ, 0)
+
+        for i in range(50):
+            cf.commander.send_setpoint(self.positionY, self.positionX, 0, int(self.positionZ * 1000))
+            print(i)
+            time.sleep(0.1)
 
     #Element.register

@@ -7,15 +7,21 @@ from cflib.crazyflie.syncLogger import SyncLogger
 
 # TODO
 # URI to the Crazyflie to connect to
-#uri = 'radio://0/80/2M'
 uri = 'radio://0/80/250K'
 
 # Change the sequence according to your setup
 #             x    y    z  YAW
 sequence = [
-    (1, 1.5, 1.2, 0),
-    (1.5, 0.5, 1.2, 0),
-    (0.5, 1.0, 1.2, 0),
+    #(0.5, 0.5, 1, 0),
+    (1,1,1,0),
+(1,1,1,90),
+(1,1,1,180),
+(1,1,1,270),
+(1,1,1,0),
+    #(1.5, 0.5, 1.2, 45),
+    #(1.5, 1.5, 1.4, 0),
+    #(0.5, 1.5, 1.3, 0),
+    #(0, 0, 1, 0),
     #(3.5, 2.5, 1.2, 0),
     #(2.5, 3.0, 1.2, 0),
     #(2.5, 2.5, 1.2, 0),
@@ -81,7 +87,7 @@ def position_callback(timestamp, data, logconf):
 
 
 def start_position_printing(scf):
-    log_conf = LogConfig(name='Position', period_in_ms=500)
+    log_conf = LogConfig(name='Position', period_in_ms=400)
     log_conf.add_variable('kalman.stateX', 'float')
     log_conf.add_variable('kalman.stateY', 'float')
     log_conf.add_variable('kalman.stateZ', 'float')
@@ -97,12 +103,14 @@ def run_sequence(scf, sequence):
     cf.param.set_value('flightmode.posSet', '1')
 
     for position in sequence:
+        print('Setting position')
         print('Setting position {}'.format(position))
         for i in range(50):
             cf.commander.send_setpoint(position[1], position[0],
                                        position[3],
                                        int(position[2] * 1000))
-            time.sleep(0.1)
+            print(i)
+            time.sleep(0.2)
 
     cf.commander.send_setpoint(0, 0, 0, 0)
     # Make sure that the last packet leaves before the link is closed
@@ -115,5 +123,5 @@ if __name__ == '__main__':
 
     with SyncCrazyflie(uri) as scf:
         reset_estimator(scf)
-        # start_position_printing(scf)
+        start_position_printing(scf)
         run_sequence(scf, sequence)
