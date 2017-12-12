@@ -15,8 +15,6 @@ class PlayGround(QWidget):
         self.UiElementList = []
 
         self.setAcceptDrops(True)
-        self.setMinimumSize(600, 600)
-        self.setMaximumWidth(600)
 
     def dragEnterEvent(self, event):
 

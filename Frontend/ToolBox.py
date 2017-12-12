@@ -16,6 +16,7 @@ class ToolBox(QListWidget):
         self.setAcceptDrops(True)
         self.setDropIndicatorShown(True)
         self.setMaximumWidth(140)
+        self.setMinimumWidth(140)
 
         self.addElements()
 
