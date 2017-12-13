@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QMainWindow, QFrame, QHBoxLayout, QWidget, QGridLayo
 from Frontend.MenuBar import MenuBar
 from Frontend.PlayGround import PlayGround
 from Frontend.ToolBox import ToolBox
+from Frontend.TrashWidget import TrashWidget
 
 
 class MainWindow(QMainWindow):
@@ -13,13 +14,17 @@ class MainWindow(QMainWindow):
         self.playground = PlayGround()
         self.toolbox = ToolBox()
         self.menuBar = MenuBar()
-        #
+        self.trash = TrashWidget()
+
+        # setup layout
         mainWidget = QWidget()
         layout = QGridLayout(mainWidget)
 
         layout.addWidget(self.menuBar,0,0,1,2)
         layout.addWidget(self.toolbox,1,0)
-        layout.addWidget(self.playground,1,1)
+        layout.addWidget(self.trash, 2, 0)
+        layout.addWidget(self.playground,1,1,2,1)
         self.setCentralWidget(mainWidget)
+
 
 

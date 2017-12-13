@@ -2,6 +2,7 @@ from Backend import Element
 
 sequenceList = []
 
+
 class sequenceList():
     def add(element):
         if not isinstance(element, Element):
@@ -14,7 +15,7 @@ class sequenceList():
         sequenceList.insert(position, element)
 
     def removePosition(position):
-        sequenceList.__delitem__(position) #TODO slice or remove only one element?
+        sequenceList.__delitem__(position)  # TODO slice or remove only one element?
 
     def getSequence(self):
         return sequenceList
