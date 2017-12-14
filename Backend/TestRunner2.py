@@ -3,6 +3,7 @@ import cflib.crtp
 from Backend.Elements.PositionMoverElement import PositionMoverElement
 from Backend.Elements.IncrementXElement import IncrementXElement
 from Backend.Elements.IncrementYElement import IncrementYElement
+from Backend.Elements.LandingElement import LandingElement
 from Backend.Elements.IncrementZElement import IncrementZElement
 from Backend.Elements.LoopElement import LoopElement
 from Backend.Elements.IncrementYawElement import IncrementYawElement
@@ -34,6 +35,7 @@ class TestRunner():
 
     testList = SequenceList()
     testList.add(PositionMoverElement(1,2.5,1,0))
+    testList.add(LandingElement())
     testList.add(LoopElement(3, loopList))
     testList.add(IncrementYawElement(-30))
     testList.add(IncrementXElement(0.5))
@@ -41,11 +43,14 @@ class TestRunner():
     testList.add(IncrementXElement(-0.5))
     testList.add(IncrementZElement(0.5))
     testList.add(IncrementYElement(0.5))
-    testList.add(IncrementYawElement(0))
+    testList.add(IncrementYawElement(+30))
 
     cflib.crtp.init_drivers()
+    time.sleep(2)
     available = cflib.crtp.scan_interfaces()
+    time.sleep(2)
     syncCrazyflie = SyncCrazyflie(available[0][0])
+    time.sleep(2)
     syncCrazyflie.open_link()
     ResetEstimator.reset_estimator(syncCrazyflie)
     syncCrazyflie.cf.param.set_value('flightmode.posSet', '1')
