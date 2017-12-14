@@ -4,6 +4,7 @@ from cflib.crazyflie import Commander
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from cflib.crazyflie.log import LogConfig
 import cflib.crtp
+from Backend.ResetEstimator import ResetEstimator
 
 class Runner():
     def crazyflie_disconnected(a):
@@ -42,37 +43,36 @@ class Runner():
     cflib.crtp.init_drivers()
     available = cflib.crtp.scan_interfaces()
     print(available)
-    #firstInterface = available[0][0]
-    crazyflie = Crazyflie()
-    crazyflie.connected.add_callback(crazyflie_connected)
-    crazyflie.disconnected.add_callback(crazyflie_disconnected)
-    crazyflie.connection_lost.add_callback(crazyflie_connection_lost)
-    crazyflie.connection_failed.add_callback(crazyflie_connection_failed)
-    crazyflie.packet_received.add_callback(crazyflie_packet_received)
-    crazyflie.packet_sent.add_callback(crazyflie_packet_sent)
-    crazyflie.open_link(available[0][0])
-    status = crazyflie.state
-    #crazyflie.console
+    #crazyflie = Crazyflie()
+    #crazyflie.connected.add_callback(crazyflie_connected)
+    #crazyflie.disconnected.add_callback(crazyflie_disconnected)
+    #crazyflie.connection_lost.add_callback(crazyflie_connection_lost)
+    #crazyflie.connection_failed.add_callback(crazyflie_connection_failed)
+    #crazyflie.packet_received.add_callback(crazyflie_packet_received)
+    #crazyflie.packet_sent.add_callback(crazyflie_packet_sent)
+    #crazyflie.open_link(available[0][0])
 
-    commander = Commander(crazyflie)
-    commander.send_setpoint(0.0,0.0,0,30000)
-    commander.send_setpoint(0.0,0.0,0,30000)
-    commander.send_setpoint(0.0,0.0,0,30000)
-    commander.send_setpoint(0.0,0.0,0,30000)
-    commander.send_setpoint(0.0,0.0,0,50000)
-    commander.send_setpoint(0.0,0.0,0,60000)
-    commander.send_setpoint(0.0,0.0,0,60000)
-    commander.send_setpoint(0.0,0.0,0,30000)
-    commander.send_setpoint(0.0,0.0,0,40000)
+    #commander = Commander(crazyflie)
+    #commander.send_setpoint(0.0,0.0,0,30000)
+    #commander.send_setpoint(0.0,0.0,0,30000)
+    #commander.send_setpoint(0.0,0.0,0,30000)
+    #commander.send_setpoint(0.0,0.0,0,30000)
+    #commander.send_setpoint(0.0,0.0,0,50000)
+    #commander.send_setpoint(0.0,0.0,0,60000)
+    #commander.send_setpoint(0.0,0.0,0,60000)
+    #commander.send_setpoint(0.0,0.0,0,30000)
+    #commander.send_setpoint(0.0,0.0,0,40000)
 
     sequence = [
-        (2.5, 2.5, 1.2, 0),
-        (1.5, 2.5, 1.2, 0),
-        (2.5, 2.0, 1.2, 0),
-        (3.5, 2.5, 1.2, 0),
-        (2.5, 3.0, 1.2, 0),
-        (2.5, 2.5, 1.2, 0),
-        (2.5, 2.5, 0.4, 0),
+        (1, 1.5, 1.2, 0),
+        (1.5, 0.5, 1.2, 0),
+        (0.5, 1.0, 1.2, 0),
     ]
-    syncCrazyflie = SyncCrazyflie()
-    run_sequence(syncCrazyflie, sequence)
+
+    # syncCrazyflie = SyncCrazyflie()
+    # run_sequence(syncCrazyflie, sequence)
+    #crazyflie.param.set_value('flightmode.posSet', '1')
+
+    crazyflie = SyncCrazyflie(available[0][0])
+    ResetEstimator.reset_estimator(crazyflie)
+    run_sequence(crazyflie, sequence)
