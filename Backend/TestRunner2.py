@@ -4,6 +4,7 @@ from Backend.Elements.PositionMoverElement import PositionMoverElement
 from Backend.Elements.IncrementXElement import IncrementXElement
 from Backend.Elements.IncrementYElement import IncrementYElement
 from Backend.Elements.IncrementZElement import IncrementZElement
+from Backend.Elements.LoopElement import LoopElement
 from Backend.Elements.IncrementYawElement import IncrementYawElement
 from Backend.ResetEstimator import ResetEstimator
 from Backend.SequenceList import SequenceList
@@ -25,8 +26,15 @@ class TestRunner():
 
     print("start")
 
+    loopList = SequenceList()
+    loopList.add(IncrementXElement(0.5))
+    loopList.add(IncrementYElement(0.5))
+    loopList.add(IncrementXElement(-0.5))
+    loopList.add(IncrementYElement(-0.5))
+
     testList = SequenceList()
-    testList.add(PositionMoverElement(1,3.5,1,0))
+    testList.add(PositionMoverElement(1,2.5,1,0))
+    testList.add(LoopElement(3, loopList))
     testList.add(IncrementYawElement(-30))
     testList.add(IncrementXElement(0.5))
     testList.add(IncrementYElement(-1))

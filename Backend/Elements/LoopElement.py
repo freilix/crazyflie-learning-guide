@@ -2,10 +2,11 @@ from Backend.Elements.Element import Element
 
 @Element.register
 class LoopElement(Element):
-    def __init__(self):
-        self.elementList = []
-        self.counts = 0
+    def __init__(self, rounds, list):
+        self.elementList = list
+        self.counts = rounds
 
     def run(self, crazyflie):
-        for e in self.elementList:
-            e.run(crazyflie)
+        for x in range(0, self.counts):
+            for e in self.elementList:
+                e.run(crazyflie)
