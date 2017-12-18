@@ -7,7 +7,11 @@ class IncrementYawElement(Element):
     def __init__(self, offsetYaw):
         Element.__init__(self)
         self.positionYaw = offsetYaw
+        self.time = 5
 
     def run(self, cf):
-        GP.PositionYaw += self.positionYaw
-        time.sleep(5)
+        hilf = GP.PositionYaw
+        hilf += self.positionYaw
+        hilf = hilf % 360
+        GP.PositionYaw = hilf
+        time.sleep(self.time)

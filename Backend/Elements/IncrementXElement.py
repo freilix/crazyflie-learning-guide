@@ -7,7 +7,8 @@ class IncrementXElement(Element):
     def __init__(self, offsetX):
         Element.__init__(self)
         self.positionX = offsetX
+        self.time = 5
 
     def run(self, cf):
         GP.PositionX += self.positionX
-        time.sleep(5)
+        time.sleep(self.time)
