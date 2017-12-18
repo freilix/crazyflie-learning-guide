@@ -1,21 +1,23 @@
 from Frontend.ElementWidget import IncXWidget, LandWidget, PosSetWidget, IncYawWidget, IncZWidget, IncYWidget
 
-ElementMimeType = {
-    'INC_X':   'application/x-cf-element-inc-x',
-    'INC_Y':   'application/x-cf-element-inc-y',
-    'INC_Z':   'application/x-cf-element-inc-z',
-    'INC_YAW': 'application/x-cf-element-inc-yaw',
-    'POS_SET': 'application/x-cf-element-pos-set',
-    'LAND':    'application/x-cf-element-land',
-}
+ElementMimeType = 'application/x-cf-element'
 
+# {
+#     'INC_X':   'application/x-cf-element-inc-x',
+#     'INC_Y':   'application/x-cf-element-inc-y',
+#     'INC_Z':   'application/x-cf-element-inc-z',
+#     'INC_YAW': 'application/x-cf-element-inc-yaw',
+#     'POS_SET': 'application/x-cf-element-pos-set',
+#     'LAND':    'application/x-cf-element-land',
+# }
 
-def isElementMimeType(inMime):
-    for elMime in ElementMimeType.values():
-        if inMime.hasFormat(elMime):
-
-            return True
-    return False
+#
+# def isElementMimeType(inMime):
+#     for elMime in ElementMimeType.values():
+#         if inMime.hasFormat(elMime):
+#
+#             return True
+#     return False
 
 
 
