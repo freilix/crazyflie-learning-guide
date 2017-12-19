@@ -18,7 +18,7 @@ def isDraggedElementSuperElement(selfPlayGround):
     parent = selfPlayGround.parent()
 
     while issubclass(type(parent), (LoopWidget, PlayGround)):
-        if issubclass(type(parent), (PlayGround)):
+        if issubclass(type(parent), PlayGround):
             parent = parent.parent()
         else:
             if parent is DraggedElement:
@@ -68,6 +68,7 @@ class PlayGround(QWidget):
         index = self.CalcInsertionIndex(pos)
         if index != -1 and self.layout.indexOf(self.spaceElement) != index - 1:
             self.layout.insertWidget(index, self.spaceElement)
+            self.update()
 
     def dropEvent(self, event):
         mime = event.mimeData()
@@ -75,8 +76,8 @@ class PlayGround(QWidget):
         if mime.hasFormat(ElementMimeType):
             self.insertElementWidget(self.layout.indexOf(self.spaceElement), DraggedElement)
             self.layout.removeWidget(self.spaceElement)
-            self.update()
             Frontend.PlayGround.DraggedElement = None
+            self.update()
             event.setDropAction(Qt.MoveAction)
             event.accept()
         else:
