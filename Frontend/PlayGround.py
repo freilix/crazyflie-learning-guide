@@ -5,10 +5,26 @@ from PyQt5.QtGui import QPainter, QPalette, QDrag
 from PyQt5.QtWidgets import QWidget, QListWidget, QFrame, QVBoxLayout, QGridLayout, QWidgetItem, QSpacerItem
 
 import Frontend
-from Frontend.ElementWidget import ElementWidget
+from Frontend.ElementWidget import ElementWidget, LoopWidget
 from Frontend.FrontendConfig import ElementMimeType, ElementWidgetType
 
 DraggedElement = None
+
+
+def isDraggedElementSuperElement(selfPlayGround):
+    if not issubclass(type(DraggedElement), LoopWidget):
+        return False
+
+    parent = selfPlayGround.parent()
+
+    while issubclass(type(parent), (LoopWidget, PlayGround)):
+        if issubclass(type(parent), (PlayGround)):
+            parent = parent.parent()
+        else:
+            if parent is DraggedElement:
+                return True
+            parent = parent.parent()
+    return False
 
 
 class PlayGround(QWidget):
@@ -25,15 +41,13 @@ class PlayGround(QWidget):
         self.spaceElement = QWidget(self)
         self.spaceElement.setFixedHeight(10)
 
-
     def insertElementWidget(self, index, element):
         self.layout.insertWidget(index, element)
         pass
 
-
     def dragEnterEvent(self, event):
         mime = event.mimeData()
-        if mime.hasFormat(ElementMimeType):
+        if mime.hasFormat(ElementMimeType) and not isDraggedElementSuperElement(self):
             event.accept()
         else:
             event.ignore()
@@ -50,12 +64,10 @@ class PlayGround(QWidget):
             event.ignore()
         self.update()
 
-
     def updateDropPosition(self, pos):
         index = self.CalcInsertionIndex(pos)
-        if index != -1 and self.layout.indexOf(self.spaceElement) != index-1:
-            self.layout.insertWidget(index,self.spaceElement)
-
+        if index != -1 and self.layout.indexOf(self.spaceElement) != index - 1:
+            self.layout.insertWidget(index, self.spaceElement)
 
     def dropEvent(self, event):
         mime = event.mimeData()
@@ -70,30 +82,28 @@ class PlayGround(QWidget):
         else:
             event.ignore()
 
-
     def paintEvent(self, event):
         painter = QPainter()
         painter.begin(self)
         painter.fillRect(event.rect(), Qt.white)
         painter.end()
 
-    def CalcInsertionIndex(self,pos):
-        index = self.layout.indexOf(self.childAt(pos.x(),pos.y()))
+    def CalcInsertionIndex(self, pos):
+        index = self.layout.indexOf(self.childAt(pos.x(), pos.y()))
         if index == -1:
-            index = self.layout.indexOf(self.childAt(int(self.width()/2),pos.y()+10))
+            index = self.layout.indexOf(self.childAt(int(self.width() / 2), pos.y() + 10))
             if index == -1:
                 index = self.layout.count()
         return index
 
-    def mousePressEvent(self,event):
+    def mousePressEvent(self, event):
         childAtPos = self.childAt(event.pos())
         print(type(childAtPos))
 
-        if event.button() == Qt.LeftButton and issubclass(type(childAtPos),ElementWidget):
-
+        if event.button() == Qt.LeftButton and issubclass(type(childAtPos), ElementWidget):
             drag = QDrag(self);
             mimeData = QMimeData();
-            mimeData.setData(ElementMimeType,QByteArray())
+            mimeData.setData(ElementMimeType, QByteArray())
             Frontend.PlayGround.DraggedElement = childAtPos
             drag.setMimeData(mimeData);
 
