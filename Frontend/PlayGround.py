@@ -76,6 +76,7 @@ class PlayGround(QWidget):
         if mime.hasFormat(ElementMimeType):
             self.insertElementWidget(self.layout.indexOf(self.spaceElement), DraggedElement)
             self.layout.removeWidget(self.spaceElement)
+
             Frontend.PlayGround.DraggedElement = None
             self.update()
             event.setDropAction(Qt.MoveAction)
@@ -99,6 +100,8 @@ class PlayGround(QWidget):
 
     def mousePressEvent(self, event):
         childAtPos = self.childAt(event.pos())
+        if childAtPos is None:
+           return
         parentElementWidget = self.getParentElementWidget(childAtPos)
 
         if event.button() == Qt.LeftButton and issubclass(type(parentElementWidget), ElementWidget):
