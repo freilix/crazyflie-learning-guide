@@ -23,7 +23,7 @@ class PlayGround(QWidget):
         self.layout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
 
         self.spaceElement = QWidget(self)
-        self.spaceElement.setFixedSize(300,10)
+        self.spaceElement.setFixedHeight(10)
 
 
     def insertElementWidget(self, index, element):
