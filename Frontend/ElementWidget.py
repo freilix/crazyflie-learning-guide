@@ -1,7 +1,5 @@
-from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QColor
-from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QSpinBox, QDoubleSpinBox
-from copy import deepcopy
+from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QDoubleSpinBox
 
 
 class ElementWidget(QWidget):
@@ -59,3 +57,12 @@ class LandWidget(ElementWidget):
     def __init__(self):
         super().__init__()
         self.BackgroundColor = '#A8A8A8'
+
+class LoopWidget(ElementWidget):
+    def __init__(self):
+        super().__init__()
+        self.BackgroundColor = '#37A2D7'
+        from Frontend.PlayGround import PlayGround
+        self.innerPlayground = PlayGround()
+        self.layout.addWidget(self.innerPlayground)
+

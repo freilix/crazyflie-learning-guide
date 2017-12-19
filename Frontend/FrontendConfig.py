@@ -30,6 +30,7 @@ ElementIconPath = {
     'INC_YAW': 'Icons\IncYaw.svg',
     'POS_SET': 'Icons\PosSet.svg',
     'LAND': 'Icons\Land.svg',
+    'LOOP': 'Icons\Loop.svg'
 }
 
 ElementWidgetType = {
@@ -39,6 +40,7 @@ ElementWidgetType = {
     'INC_YAW': 'IncYawWidget',
     'POS_SET': 'PosSetWidget',
     'LAND': 'LandWidget',
+    'LOOP': 'LoopWidget'
 }
 
 TrashIconPath = 'Icons\Trash.svg'
