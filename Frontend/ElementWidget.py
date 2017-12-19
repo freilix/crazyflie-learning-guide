@@ -1,6 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QColor
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QSpinBox, QDoubleSpinBox
 from copy import deepcopy
 
 
@@ -9,6 +9,8 @@ class ElementWidget(QWidget):
         super().__init__()
         self.setFixedSize(300, 40)
         self.BackgroundColor = '#AAAAAA'
+        self.layout = QHBoxLayout()
+        self.setLayout(self.layout)
 
     def paintEvent(self, event):
         painter = QPainter()
@@ -17,10 +19,16 @@ class ElementWidget(QWidget):
         painter.end()
 
 
+
 class IncXWidget(ElementWidget):
     def __init__(self):
         super().__init__()
         self.BackgroundColor = '#EACF56'
+        self.label = QLabel("Increment X:")
+        self.spinboxX = QDoubleSpinBox()
+        self.spinboxX.setSingleStep(0.1)
+        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.spinboxX)
 
 
 class IncYWidget(ElementWidget):

@@ -1,8 +1,8 @@
 from PyQt5 import QtCore
 
 from PyQt5.QtCore import QRect, Qt, QByteArray, QDataStream, QIODevice
-from PyQt5.QtGui import QPainter
-from PyQt5.QtWidgets import QWidget, QListWidget, QFrame, QVBoxLayout, QGridLayout, QWidgetItem
+from PyQt5.QtGui import QPainter, QPalette
+from PyQt5.QtWidgets import QWidget, QListWidget, QFrame, QVBoxLayout, QGridLayout, QWidgetItem, QSpacerItem
 
 from Frontend.ElementWidget import ElementWidget, IncXWidget, LandWidget
 from Frontend.FrontendConfig import ElementMimeType, ElementWidgetType
@@ -22,7 +22,8 @@ class PlayGround(QWidget):
         self.layout = QVBoxLayout(self)
         self.layout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
 
-        self.insertElementWidget(3, LandWidget())
+        self.spaceElement = QWidget(self)
+        self.spaceElement.setFixedSize(300,10)
 
 
     def insertElementWidget(self, index, element):
@@ -48,16 +49,18 @@ class PlayGround(QWidget):
         self.update()
 
 
-    def updateDropPosition(self, position):
-        pass
+    def updateDropPosition(self, pos):
+        index = self.CalcInsertionIndex(pos)
+        if index != -1 and self.layout.indexOf(self.spaceElement) != index-1:
+            self.layout.insertWidget(index,self.spaceElement)
 
 
     def dropEvent(self, event):
         mime = event.mimeData()
 
         if mime.hasFormat(ElementMimeType):
-            self.insertElementWidget(self.CalcInsertionIndex(event.pos()), DraggedElement)
-
+            self.insertElementWidget(self.layout.indexOf(self.spaceElement), DraggedElement)
+            self.layout.removeWidget(self.spaceElement)
             self.update()
             event.setDropAction(Qt.MoveAction)
             event.accept()
@@ -72,8 +75,9 @@ class PlayGround(QWidget):
         painter.end()
 
     def CalcInsertionIndex(self,pos):
-
-
-
-
-        return 1
+        index = self.layout.indexOf(self.childAt(pos.x(),pos.y()))
+        if index == -1:
+            index = self.layout.indexOf(self.childAt(int(self.width()/2),pos.y()+10))
+            if index == -1:
+                index = self.layout.count()
+        return index
