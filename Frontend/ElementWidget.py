@@ -21,6 +21,7 @@ class ElementWidget(QWidget):
         self.setDefaultLayout()
         self.setLayout(self.layout)
 
+
     def setDefaultLayout(self):
         self.layout = QHBoxLayout()
 
@@ -161,7 +162,7 @@ class LoopWidget(ElementWidget):
         from Frontend.PlayGround import PlayGround
         self.innerPlayground = PlayGround()
 
-        self.label = QLabel("Loop n-times:")
+        self.label = QLabel("Loop times:")
         self.forSpinbox = QSpinBox()
         self.forSpinbox.setMinimum(1)
 
