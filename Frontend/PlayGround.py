@@ -98,13 +98,28 @@ class PlayGround(QWidget):
 
     def mousePressEvent(self, event):
         childAtPos = self.childAt(event.pos())
-        print(type(childAtPos))
+        parentElementWidget = self.getParentElementWidget(childAtPos)
 
-        if event.button() == Qt.LeftButton and issubclass(type(childAtPos), ElementWidget):
+        if event.button() == Qt.LeftButton and issubclass(type(parentElementWidget), ElementWidget):
             drag = QDrag(self);
             mimeData = QMimeData();
             mimeData.setData(ElementMimeType, QByteArray())
-            Frontend.PlayGround.DraggedElement = childAtPos
+            Frontend.PlayGround.DraggedElement = parentElementWidget
             drag.setMimeData(mimeData);
 
             drag.exec_(Qt.MoveAction)
+
+    def getParentElementWidget(self,qwidget):
+        if self is qwidget:
+            return None
+
+        if issubclass(type(qwidget), ElementWidget):
+            return qwidget
+
+        parent = qwidget.parent()
+        while not issubclass(type(parent), ElementWidget):
+            if parent is self:
+                return None
+        return parent
+
+
