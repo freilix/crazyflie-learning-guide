@@ -8,7 +8,7 @@ class MenuBar(QWidget):
     def __init__(self, parent):
         super().__init__()
         self.mainWindow = parent
-        self.setMinimumHeight(30)
+
         self.layout = QHBoxLayout()
 
         self.buttonSearch = QPushButton("Search")
