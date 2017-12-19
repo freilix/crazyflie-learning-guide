@@ -4,7 +4,6 @@ from PyQt5.QtCore import QRect, Qt, QByteArray, QDataStream, QIODevice
 from PyQt5.QtGui import QPainter, QPalette
 from PyQt5.QtWidgets import QWidget, QListWidget, QFrame, QVBoxLayout, QGridLayout, QWidgetItem, QSpacerItem
 
-from Frontend.ElementWidget import ElementWidget, IncXWidget, LandWidget
 from Frontend.FrontendConfig import ElementMimeType, ElementWidgetType
 
 DraggedElement = None
@@ -16,7 +15,6 @@ class PlayGround(QWidget):
 
         self.dropPosRect = QRect()
 
-        self.ElementList = [ElementWidget(), ElementWidget()]
         self.setAcceptDrops(True)
 
         self.layout = QVBoxLayout(self)

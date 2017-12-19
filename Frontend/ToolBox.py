@@ -42,12 +42,9 @@ class ToolBox(QListWidget):
                 Qt.ItemIsDragEnabled)
             item.elementKey = key
 
+
     def startDrag(self, supportedActions):
         item = self.currentItem()
-
-        # elementData = QByteArray()
-        # dataStream = QDataStream(elementData,QIODevice.WriteOnly)
-        # dataStream.writeQVariant(item.elementWidget)
 
         widgetClass = getattr(__import__('ElementWidget'), ElementWidgetType[item.elementKey])
         Frontend.PlayGround.DraggedElement = widgetClass()
