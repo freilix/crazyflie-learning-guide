@@ -2,10 +2,12 @@ from threading import Thread
 
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QComboBox
 from Backend.Backend import ScanInterfaces, ConnectToCrazyflie
+from Backend.SequenceList import SequenceList
 
 class MenuBar(QWidget):
-    def __init__(self):
+    def __init__(self, parent):
         super().__init__()
+        self.mainWindow = parent
         self.setMinimumHeight(30)
         self.layout = QHBoxLayout()
 
@@ -27,7 +29,13 @@ class MenuBar(QWidget):
         self.setLayout(self.layout)
 
     def buttonPlayPressed(self):
-        pass
+        list = SequenceList()
+        playground = self.mainWindow.playground
+        count = playground.layout.count()
+        for i in range(0, count):
+            c = playground.layout.itemAt(i).widget()
+            element = c.play()
+            list.add(element)
 
     def buttonConnectPressed(self):
         currentAdress = self.comboBoxAdresses.currentText()

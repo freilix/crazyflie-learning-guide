@@ -13,7 +13,7 @@ class MainWindow(QMainWindow):
         # Setup Widgets
         self.playground = PlayGround()
         self.toolbox = ToolBox()
-        self.menuBar = MenuBar()
+        self.menuBar = MenuBar(self)
         self.trash = TrashWidget()
 
         # setup layout

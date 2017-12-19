@@ -2,6 +2,15 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QColor
 from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QSpinBox, QDoubleSpinBox, QGridLayout, QLayout
 from copy import deepcopy
+import abc
+from Backend.Elements.IncrementXElement import IncrementXElement
+from Backend.Elements.IncrementYElement import IncrementYElement
+from Backend.Elements.IncrementZElement import IncrementZElement
+from Backend.Elements.IncrementYawElement import IncrementYawElement
+from Backend.Elements.LandingElement import LandingElement
+from Backend.Elements.LoopElement import LoopElement
+from Backend.Elements.PositionMoverElement import PositionMoverElement
+from Backend.SequenceList import SequenceList
 
 
 class ElementWidget(QWidget):
@@ -15,13 +24,15 @@ class ElementWidget(QWidget):
     def setDefaultLayout(self):
         self.layout = QHBoxLayout()
 
-
     def paintEvent(self, event):
         painter = QPainter()
         painter.begin(self)
         painter.fillRect(self.rect(), QColor(self.BackgroundColor))
         painter.end()
 
+    @abc.abstractmethod
+    def play(self):
+        raise NotImplementedError("abstract method")
 
 class IncXWidget(ElementWidget):
     def __init__(self):
@@ -34,6 +45,9 @@ class IncXWidget(ElementWidget):
         self.spinboxX.setMaximum(5)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.spinboxX)
+
+    def play(self):
+        return IncrementXElement(self.spinboxX.value)
 
 
 class IncYWidget(ElementWidget):
@@ -48,6 +62,9 @@ class IncYWidget(ElementWidget):
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.spinboxY)
 
+    def play(self):
+        return IncrementYElement(self.spinboxY.value)
+
 
 class IncZWidget(ElementWidget):
     def __init__(self):
@@ -61,6 +78,9 @@ class IncZWidget(ElementWidget):
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.spinboxZ)
 
+    def play(self):
+        return IncrementZElement(self.spinboxZ.value)
+
 
 class IncYawWidget(ElementWidget):
     def __init__(self):
@@ -73,6 +93,9 @@ class IncYawWidget(ElementWidget):
         self.spinboxYaw.setMinimum(-180)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.spinboxYaw)
+
+    def play(self):
+        return IncrementYawElement(self.spinboxYaw.value)
 
 
 class PosSetWidget(ElementWidget):
@@ -116,6 +139,9 @@ class PosSetWidget(ElementWidget):
         self.layout.addWidget(self.labelYaw)
         self.layout.addWidget(self.spinboxYaw)
 
+    def play(self):
+        return PositionMoverElement(self.spinboxX.value, self.spinboxY.value, self.spinboxZ.value, self.spinboxYaw.value)
+
 
 class LandWidget(ElementWidget):
     def __init__(self):
@@ -123,6 +149,9 @@ class LandWidget(ElementWidget):
         self.BackgroundColor = '#CCA55E'
         self.label = QLabel("Landing")
         self.layout.addWidget(self.label)
+
+    def play(self):
+        return LandingElement()
 
 
 class LoopWidget(ElementWidget):
@@ -140,6 +169,16 @@ class LoopWidget(ElementWidget):
         self.layout.addWidget(self.innerPlayground, 1, 0, 1, 2)
         self.layout.addWidget(self.label, 0, 0)
         self.layout.addWidget(self.forSpinbox, 0, 1)
+
+    def play(self):
+        list = SequenceList()
+        playground = self.innerPlayground
+        count = playground.layout.count()
+        for i in range(0, count):
+            c = playground.layout.itemAt(i).widget()
+            element = c.play()
+            list.add(element)
+        return LoopElement(self.forSpinbox.value, list)
 
     def setDefaultLayout(self):
         self.layout = QGridLayout()
