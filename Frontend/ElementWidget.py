@@ -1,16 +1,20 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QColor
-from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QSpinBox, QDoubleSpinBox
+from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QSpinBox, QDoubleSpinBox, QGridLayout, QLayout
 from copy import deepcopy
 
 
 class ElementWidget(QWidget):
     def __init__(self):
         super().__init__()
-        self.setMinimumWidth(400)
-        self.BackgroundColor = '#AAAAAA'
         self.layout = QHBoxLayout()
+        self.BackgroundColor = '#AAAAAA'
+        self.setDefaultLayout()
         self.setLayout(self.layout)
+
+    def setDefaultLayout(self):
+        self.layout = QHBoxLayout()
+
 
     def paintEvent(self, event):
         painter = QPainter()
@@ -98,10 +102,23 @@ class LandWidget(ElementWidget):
         self.label = QLabel("Landing")
         self.layout.addWidget(self.label)
 
+
 class LoopWidget(ElementWidget):
     def __init__(self):
         super().__init__()
         self.BackgroundColor = '#37A2D7'
         from Frontend.PlayGround import PlayGround
         self.innerPlayground = PlayGround()
-        self.layout.addWidget(self.innerPlayground)
+
+        self.label = QLabel("for:")
+        self.forSpinbox = QSpinBox()
+        self.forSpinbox.setMinimum(1)
+
+
+        self.layout.addWidget(self.innerPlayground, 1, 0, 1, 2)
+        self.layout.addWidget(self.label, 0, 0)
+        self.layout.addWidget(self.forSpinbox, 0, 1)
+
+    def setDefaultLayout(self):
+        self.layout = QGridLayout()
+
