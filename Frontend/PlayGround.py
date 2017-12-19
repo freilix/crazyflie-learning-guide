@@ -18,7 +18,7 @@ class PlayGround(QWidget):
         self.setAcceptDrops(True)
 
         self.layout = QVBoxLayout(self)
-        self.layout.setAlignment(Qt.AlignTop | Qt.AlignHCenter)
+        self.layout.setAlignment(Qt.AlignTop | Qt.AlignLeft)
 
         self.spaceElement = QWidget(self)
         self.spaceElement.setFixedHeight(10)
@@ -36,6 +36,8 @@ class PlayGround(QWidget):
         else:
             event.ignore()
 
+    def dragLeaveEvent(self, event):
+        self.layout.removeWidget(self.spaceElement)
 
     def dragMoveEvent(self, event):
         mime = event.mimeData()
