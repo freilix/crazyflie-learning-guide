@@ -24,7 +24,9 @@ class ToolBox(QListWidget):
         self.mimeTypes()
 
     def addElements(self):
-        for key in ElementIconPath.keys():
+        for key, value in sorted(ElementIconPath.items()):
+            print(key, value)
+
             item = QListWidgetItem(self)
             item.setIcon(QIcon(ElementIconPath[key]))
             item.setFlags(
