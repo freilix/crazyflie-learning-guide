@@ -1,9 +1,11 @@
 from PyQt5 import QtCore
 
-from PyQt5.QtCore import QRect, Qt, QByteArray, QDataStream, QIODevice
-from PyQt5.QtGui import QPainter, QPalette
+from PyQt5.QtCore import QRect, Qt, QByteArray, QDataStream, QIODevice, QMimeData
+from PyQt5.QtGui import QPainter, QPalette, QDrag
 from PyQt5.QtWidgets import QWidget, QListWidget, QFrame, QVBoxLayout, QGridLayout, QWidgetItem, QSpacerItem
 
+import Frontend
+from Frontend.ElementWidget import ElementWidget
 from Frontend.FrontendConfig import ElementMimeType, ElementWidgetType
 
 DraggedElement = None
@@ -62,6 +64,7 @@ class PlayGround(QWidget):
             self.insertElementWidget(self.layout.indexOf(self.spaceElement), DraggedElement)
             self.layout.removeWidget(self.spaceElement)
             self.update()
+            Frontend.PlayGround.DraggedElement = None
             event.setDropAction(Qt.MoveAction)
             event.accept()
         else:
@@ -81,3 +84,17 @@ class PlayGround(QWidget):
             if index == -1:
                 index = self.layout.count()
         return index
+
+    def mousePressEvent(self,event):
+        childAtPos = self.childAt(event.pos())
+        print(type(childAtPos))
+
+        if event.button() == Qt.LeftButton and issubclass(type(childAtPos),ElementWidget):
+
+            drag = QDrag(self);
+            mimeData = QMimeData();
+            mimeData.setData(ElementMimeType,QByteArray())
+            Frontend.PlayGround.DraggedElement = childAtPos
+            drag.setMimeData(mimeData);
+
+            drag.exec_(Qt.MoveAction)

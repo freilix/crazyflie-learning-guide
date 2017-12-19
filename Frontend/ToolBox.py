@@ -1,18 +1,9 @@
-import json
-import pickle
-
-from PyQt5 import QtGui
-
-from PyQt5.QtCore import QSize, QMimeData, QByteArray, Qt, QDataStream, QIODevice
-from PyQt5.QtGui import QIcon, QBrush, QColor, QDrag, QPainter
-from PyQt5.QtWidgets import QListWidget, QListView, QListWidgetItem, QStyle
+from PyQt5.QtCore import QSize, QMimeData, QByteArray, Qt
+from PyQt5.QtGui import QIcon, QDrag
+from PyQt5.QtWidgets import QListWidget, QListView, QListWidgetItem
 
 import Frontend
-from Frontend.ElementWidget import IncXWidget, IncYWidget, IncZWidget, IncYawWidget, PosSetWidget, LandWidget
 from Frontend.FrontendConfig import ElementIconPath, ElementMimeType, ElementWidgetType
-from Frontend.PlayGround import DraggedElement
-
-
 
 
 class ToolBox(QListWidget):
@@ -46,14 +37,21 @@ class ToolBox(QListWidget):
     def startDrag(self, supportedActions):
         item = self.currentItem()
 
-        widgetClass = getattr(__import__('ElementWidget'), ElementWidgetType[item.elementKey])
+        module = my_import("Frontend.ElementWidget")
+        widgetClass = getattr(module, ElementWidgetType[item.elementKey])
         Frontend.PlayGround.DraggedElement = widgetClass()
 
         mimedata = QMimeData()
-        mimedata.setData(ElementMimeType,QByteArray())
+        mimedata.setData(ElementMimeType, QByteArray())
 
         drag = QDrag(self)
         drag.setMimeData(mimedata)
 
         drag.exec_(Qt.MoveAction)
 
+def my_import(name):
+    components = name.split('.')
+    mod = __import__(components[0])
+    for comp in components[1:]:
+        mod = getattr(mod, comp)
+    return mod
