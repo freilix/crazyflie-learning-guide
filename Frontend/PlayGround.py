@@ -48,6 +48,7 @@ class PlayGround(QWidget):
     def dragEnterEvent(self, event):
         mime = event.mimeData()
         if mime.hasFormat(ElementMimeType) and not isDraggedElementSuperElement(self):
+            #self.updateDropPosition(event.pos())
             event.accept()
         else:
             event.ignore()
@@ -65,9 +66,23 @@ class PlayGround(QWidget):
         self.update()
 
     def updateDropPosition(self, pos):
-        index = self.CalcInsertionIndex(pos)
-        if index != -1 and self.layout.indexOf(self.spaceElement) != index - 1:
-            self.layout.insertWidget(index, self.spaceElement)
+        newSpaceIndex = self.calcInsertionIndex(pos)
+        draggedElementIndex = self.layout.indexOf(DraggedElement)
+        spaceIndex = self.layout.indexOf(self.spaceElement)
+
+        print("new " + newSpaceIndex.__str__())
+        print("drg " + draggedElementIndex.__str__())
+        print("spc " + spaceIndex.__str__())
+        print("------------------")
+
+        spaceAlreadyAtCorrectIndex = newSpaceIndex -1 == spaceIndex
+        oldElementDragged = draggedElementIndex != -1
+        spaceIsNeigbourOfDraggedElement = oldElementDragged and (draggedElementIndex == newSpaceIndex or draggedElementIndex +1 == newSpaceIndex)
+        noSpaceShown = spaceIndex == -1
+
+        if noSpaceShown or not (spaceAlreadyAtCorrectIndex or spaceIsNeigbourOfDraggedElement):
+            self.layout.insertWidget(newSpaceIndex, self.spaceElement)
+            print("update")
             self.update()
 
     def dropEvent(self, event):
@@ -90,18 +105,30 @@ class PlayGround(QWidget):
         painter.fillRect(event.rect(), Qt.white)
         painter.end()
 
-    def CalcInsertionIndex(self, pos):
-        index = self.layout.indexOf(self.childAt(pos.x(), pos.y()))
+    def calcInsertionIndex(self, pos):
+        middleXPos = int(self.sizeHint().width() / 2)
+
+        childAtOriginalPos = self.childAt(middleXPos, pos.y())
+        elementWidgetParentAtOriginalPos = self.getParentElementWidget(childAtOriginalPos)
+
+        index = self.layout.indexOf(elementWidgetParentAtOriginalPos)
+
+        if index is not -1:
+            return index
+
+        ManipulatedYPos = pos.y() + self.layout.spacing() * 4
+        childAtManipuatedPos = self.childAt(middleXPos, ManipulatedYPos)
+        elementWidgetParentAtManipulatedPos = self.getParentElementWidget(childAtManipuatedPos)
+        index = self.layout.indexOf(elementWidgetParentAtManipulatedPos)
+
         if index == -1:
-            index = self.layout.indexOf(self.childAt(int(self.width() / 2), pos.y() + 10))
-            if index == -1:
-                index = self.layout.count()
+            index = self.layout.count()
+
         return index
 
     def mousePressEvent(self, event):
         childAtPos = self.childAt(event.pos())
-        if childAtPos is None:
-           return
+
         parentElementWidget = self.getParentElementWidget(childAtPos)
 
         if event.button() == Qt.LeftButton and issubclass(type(parentElementWidget), ElementWidget):
@@ -113,17 +140,19 @@ class PlayGround(QWidget):
 
             drag.exec_(Qt.MoveAction)
 
-    def getParentElementWidget(self,qwidget):
-        if self is qwidget:
+    def getParentElementWidget(self, child):
+        if child is None:
             return None
 
-        if issubclass(type(qwidget), ElementWidget):
-            return qwidget
+        if child is self:
+            return None
 
-        parent = qwidget.parent()
+        if issubclass(type(child), ElementWidget):
+            return child
+
+        parent = child.parent()
         while not issubclass(type(parent), ElementWidget):
             if parent is self:
                 return None
+            parent = parent.parent()
         return parent
-
-
