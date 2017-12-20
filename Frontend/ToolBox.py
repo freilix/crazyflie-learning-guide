@@ -1,10 +1,9 @@
-from PyQt5 import QtGui
+from PyQt5.QtCore import QSize, QMimeData, QByteArray, Qt
+from PyQt5.QtGui import QIcon, QDrag
+from PyQt5.QtWidgets import QListWidget, QListView, QListWidgetItem
 
-from PyQt5.QtCore import QSize, Qt, QMimeData, QByteArray
-from PyQt5.QtGui import QIcon, QBrush, QColor, QDrag, QPainter
-from PyQt5.QtWidgets import QListWidget, QListView, QListWidgetItem, QStyle
-
-from Frontend.FrontendConfig import ElementIconPath, ElementMimeType
+import Frontend
+from Frontend.FrontendConfig import ElementIconPath, ElementMimeType, ElementWidgetType
 
 
 class ToolBox(QListWidget):
@@ -20,27 +19,39 @@ class ToolBox(QListWidget):
 
         self.setMinimumHeight((self.count() + 1) * 40 - 12)
         self.setFrameStyle(0)
-        self.setStyleSheet("""QListWidget{ background: transparent; } """ )
+        self.setStyleSheet("""QListWidget{ background: transparent; } """)
+
+        self.mimeTypes()
 
     def addElements(self):
-        for key in ElementIconPath:
-            qPositionMoverItem = QListWidgetItem(self)
-            qPositionMoverItem.setIcon(QIcon(ElementIconPath[key]))
-            qPositionMoverItem.setFlags(
+        for key, value in sorted(ElementIconPath.items()):
+            item = QListWidgetItem(self)
+            item.setIcon(QIcon(ElementIconPath[key]))
+            item.setFlags(
                 Qt.ItemIsEnabled |
                 Qt.ItemIsSelectable |
                 Qt.ItemIsDragEnabled)
+            item.elementKey = key
 
     def startDrag(self, supportedActions):
         item = self.currentItem()
 
-        mimedata = QMimeData()
-        bytes = QByteArray().append("INC_X")
+        module = my_import("Frontend.ElementWidget")
+        widgetClass = getattr(module, ElementWidgetType[item.elementKey])
+        Frontend.PlayGround.DraggedElement = widgetClass()
 
-        mimedata.setData(ElementMimeType['INC_X'], bytes)
+        mimedata = QMimeData()
+        mimedata.setData(ElementMimeType, QByteArray())
 
         drag = QDrag(self)
         drag.setMimeData(mimedata)
 
-
         drag.exec_(Qt.MoveAction)
+
+
+def my_import(name):
+    components = name.split('.')
+    mod = __import__(components[0])
+    for comp in components[1:]:
+        mod = getattr(mod, comp)
+    return mod

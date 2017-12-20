@@ -1,11 +1,29 @@
-from PyQt5 import QtCore
+from PyQt5.QtCore import QRect, Qt, QByteArray, QMimeData
+from PyQt5.QtGui import QPainter, QDrag
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
-from PyQt5.QtCore import QRect, Qt, QByteArray
-from PyQt5.QtGui import QPainter
-from PyQt5.QtWidgets import QWidget, QListWidget, QFrame, QVBoxLayout, QGridLayout
+import Frontend
+from Frontend.ElementWidget import ElementWidget, LoopWidget
+from Frontend.FrontendConfig import ElementMimeType
 
-from Frontend.ElementWidget import ElementWidget, IncXWidget
-from Frontend.FrontendConfig import ElementMimeType, isElementMimeType, ElementWidgetType
+
+DraggedElement = None
+
+
+def isDraggedElementSuperElement(selfPlayGround):
+    if not issubclass(type(DraggedElement), LoopWidget):
+        return False
+
+    parent = selfPlayGround.parent()
+
+    while issubclass(type(parent), (LoopWidget, PlayGround)):
+        if issubclass(type(parent), PlayGround):
+            parent = parent.parent()
+        else:
+            if parent is DraggedElement:
+                return True
+            parent = parent.parent()
+    return False
 
 
 class PlayGround(QWidget):
@@ -14,45 +32,66 @@ class PlayGround(QWidget):
 
         self.dropPosRect = QRect()
 
-        self.ElementList = [ElementWidget(), ElementWidget()]
         self.setAcceptDrops(True)
 
         self.layout = QVBoxLayout(self)
-        self.layout.setAlignment(Qt.AlignHCenter)
+        self.layout.setAlignment(Qt.AlignTop | Qt.AlignLeft)
 
-        self.insertElementWidget(3, ElementWidget())
+        self.spaceElement = QWidget(self)
+        self.spaceElement.setFixedHeight(10)
 
     def insertElementWidget(self, index, element):
         self.layout.insertWidget(index, element)
         pass
 
     def dragEnterEvent(self, event):
-        if isElementMimeType(event.mimeData()):
+        mime = event.mimeData()
+        if mime.hasFormat(ElementMimeType) and not isDraggedElementSuperElement(self):
+            #self.updateDropPosition(event.pos())
             event.accept()
         else:
             event.ignore()
 
+    def dragLeaveEvent(self, event):
+        self.layout.removeWidget(self.spaceElement)
+
     def dragMoveEvent(self, event):
-        if isElementMimeType(event.mimeData()):
+        mime = event.mimeData()
+        if mime.hasFormat(ElementMimeType):
             self.updateDropPosition(event.pos())
             event.accept()
         else:
             event.ignore()
         self.update()
 
-    def updateDropPosition(self, position):
-        pass
+    def updateDropPosition(self, pos):
+        newSpaceIndex = self.calcInsertionIndex(pos)
+        draggedElementIndex = self.layout.indexOf(DraggedElement)
+        spaceIndex = self.layout.indexOf(self.spaceElement)
+
+        # print("new " + newSpaceIndex.__str__())
+        # print("drg " + draggedElementIndex.__str__())
+        # print("spc " + spaceIndex.__str__())
+        # print("------------------")
+
+        spaceAlreadyAtCorrectIndex = newSpaceIndex -1 == spaceIndex
+        oldElementDragged = draggedElementIndex != -1
+        spaceIsNeigbourOfDraggedElement = oldElementDragged and (draggedElementIndex == newSpaceIndex or draggedElementIndex +1 == newSpaceIndex)
+        noSpaceShown = spaceIndex == -1
+
+        if noSpaceShown or not (spaceAlreadyAtCorrectIndex or spaceIsNeigbourOfDraggedElement):
+            self.layout.insertWidget(newSpaceIndex, self.spaceElement)
+            self.update()
 
     def dropEvent(self, event):
         mime = event.mimeData()
 
-        if isElementMimeType(mime):
-            data = mime.data(ElementMimeType['INC_X'])
+        if mime.hasFormat(ElementMimeType):
+            self.insertElementWidget(self.layout.indexOf(self.spaceElement), DraggedElement)
+            self.layout.removeWidget(self.spaceElement)
 
-
-            self.insertElementWidget(1, IncXWidget())
+            Frontend.PlayGround.DraggedElement = None
             self.update()
-
             event.setDropAction(Qt.MoveAction)
             event.accept()
         else:
@@ -62,5 +101,56 @@ class PlayGround(QWidget):
         painter = QPainter()
         painter.begin(self)
         painter.fillRect(event.rect(), Qt.white)
-
         painter.end()
+
+    def calcInsertionIndex(self, pos):
+        middleXPos = int(self.sizeHint().width() / 2)
+
+        childAtOriginalPos = self.childAt(middleXPos, pos.y())
+        elementWidgetParentAtOriginalPos = self.getParentElementWidget(childAtOriginalPos)
+
+        index = self.layout.indexOf(elementWidgetParentAtOriginalPos)
+
+        if index is not -1:
+            return index
+
+        ManipulatedYPos = pos.y() + self.layout.spacing() * 4
+        childAtManipuatedPos = self.childAt(middleXPos, ManipulatedYPos)
+        elementWidgetParentAtManipulatedPos = self.getParentElementWidget(childAtManipuatedPos)
+        index = self.layout.indexOf(elementWidgetParentAtManipulatedPos)
+
+        if index == -1:
+            index = self.layout.count()
+
+        return index
+
+    def mousePressEvent(self, event):
+        childAtPos = self.childAt(event.pos())
+
+        parentElementWidget = self.getParentElementWidget(childAtPos)
+
+        if event.button() == Qt.LeftButton and issubclass(type(parentElementWidget), ElementWidget):
+            drag = QDrag(self);
+            mimeData = QMimeData();
+            mimeData.setData(ElementMimeType, QByteArray())
+            Frontend.PlayGround.DraggedElement = parentElementWidget
+            drag.setMimeData(mimeData);
+
+            drag.exec_(Qt.MoveAction)
+
+    def getParentElementWidget(self, child):
+        if child is None:
+            return None
+
+        if child is self:
+            return None
+
+        if issubclass(type(child), ElementWidget):
+            return child
+
+        parent = child.parent()
+        while not issubclass(type(parent), ElementWidget):
+            if parent is self:
+                return None
+            parent = parent.parent()
+        return parent
