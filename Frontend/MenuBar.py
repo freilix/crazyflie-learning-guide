@@ -27,9 +27,10 @@ class MenuBar(QWidget):
         self.layout.addWidget(self.buttonPlay)
 
         self.setLayout(self.layout)
+        self.playing = False
 
     def buttonPlayPressed(self):
-        if not self.scf:
+        if (not self.scf) or self.playing:
             pass
 
         list = SequenceList()
@@ -41,6 +42,7 @@ class MenuBar(QWidget):
             list.add(element)
         ChangePositionCoordinates(list)
         SendCoordinatesToCrazyflie(self.scf)
+        self.playing = True
 
     def buttonConnectPressed(self):
         if self.scf:
