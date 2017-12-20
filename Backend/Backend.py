@@ -1,7 +1,10 @@
 import time
 import cflib.crtp
+from threading import Thread
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
 from Backend.ResetEstimator import ResetEstimator
+from Backend.GlobalPosition import GlobalPosition as GP
+from cflib.crazyflie.log import LogConfig
 
 def ScanInterfaces():
     cflib.crtp.init_drivers()
@@ -15,3 +18,37 @@ def ConnectToCrazyflie(interface):
     syncCrazyflie.open_link()
     ResetEstimator.reset_estimator(syncCrazyflie)
     return syncCrazyflie
+
+def ChangePositionCoordinates(list):
+    def runList(list):
+        print("thread")
+        list.run(1)
+    threadListRunner = Thread(target=runList, args=(list, ))
+    threadListRunner.start()
+
+def SendCoordinatesToCrazyflie(syncCrazyflie):
+    def sendGlobalPosition(cf):
+        cf.param.set_value('flightmode.posSet', '1')
+        while True:
+            cf.commander.send_setpoint(GP.PositionY, GP.PositionX, GP.PositionYaw, int(GP.PositionZ * 1000))
+            print(
+                GP.PositionX.__str__() + ", " + GP.PositionY.__str__() + ", " + GP.PositionZ.__str__() + ", " + GP.PositionYaw.__str__())
+            time.sleep(0.1)
+            cf.commander.send_setpoint(0, 0, 0, 0)
+    threadGlobalPosition = Thread(target=sendGlobalPosition, args=(syncCrazyflie.cf,))
+    threadGlobalPosition.start()
+
+def start_position_printing(scf):
+    def position_callback(timestamp, data, logconf):
+        x = data['kalman.stateX']
+        y = data['kalman.stateY']
+        z = data['kalman.stateZ']
+        print('pos: ({}, {}, {})'.format(x, y, z))
+    log_conf = LogConfig(name='Position', period_in_ms=400)
+    log_conf.add_variable('kalman.stateX', 'float')
+    log_conf.add_variable('kalman.stateY', 'float')
+    log_conf.add_variable('kalman.stateZ', 'float')
+
+    scf.cf.log.add_config(log_conf)
+    log_conf.data_received_cb.add_callback(position_callback)
+    log_conf.start()
