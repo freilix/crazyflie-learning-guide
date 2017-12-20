@@ -1,12 +1,11 @@
-from PyQt5 import QtCore
-
-from PyQt5.QtCore import QRect, Qt, QByteArray, QDataStream, QIODevice, QMimeData
-from PyQt5.QtGui import QPainter, QPalette, QDrag
-from PyQt5.QtWidgets import QWidget, QListWidget, QFrame, QVBoxLayout, QGridLayout, QWidgetItem, QSpacerItem
+from PyQt5.QtCore import QRect, Qt, QByteArray, QMimeData
+from PyQt5.QtGui import QPainter, QDrag
+from PyQt5.QtWidgets import QWidget, QVBoxLayout
 
 import Frontend
 from Frontend.ElementWidget import ElementWidget, LoopWidget
-from Frontend.FrontendConfig import ElementMimeType, ElementWidgetType
+from Frontend.FrontendConfig import ElementMimeType
+
 
 DraggedElement = None
 
@@ -70,10 +69,10 @@ class PlayGround(QWidget):
         draggedElementIndex = self.layout.indexOf(DraggedElement)
         spaceIndex = self.layout.indexOf(self.spaceElement)
 
-        print("new " + newSpaceIndex.__str__())
-        print("drg " + draggedElementIndex.__str__())
-        print("spc " + spaceIndex.__str__())
-        print("------------------")
+        # print("new " + newSpaceIndex.__str__())
+        # print("drg " + draggedElementIndex.__str__())
+        # print("spc " + spaceIndex.__str__())
+        # print("------------------")
 
         spaceAlreadyAtCorrectIndex = newSpaceIndex -1 == spaceIndex
         oldElementDragged = draggedElementIndex != -1
@@ -82,7 +81,6 @@ class PlayGround(QWidget):
 
         if noSpaceShown or not (spaceAlreadyAtCorrectIndex or spaceIsNeigbourOfDraggedElement):
             self.layout.insertWidget(newSpaceIndex, self.spaceElement)
-            print("update")
             self.update()
 
     def dropEvent(self, event):

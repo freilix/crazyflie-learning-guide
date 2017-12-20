@@ -25,8 +25,6 @@ class ToolBox(QListWidget):
 
     def addElements(self):
         for key, value in sorted(ElementIconPath.items()):
-            print(key, value)
-
             item = QListWidgetItem(self)
             item.setIcon(QIcon(ElementIconPath[key]))
             item.setFlags(
@@ -34,7 +32,6 @@ class ToolBox(QListWidget):
                 Qt.ItemIsSelectable |
                 Qt.ItemIsDragEnabled)
             item.elementKey = key
-
 
     def startDrag(self, supportedActions):
         item = self.currentItem()
@@ -50,6 +47,7 @@ class ToolBox(QListWidget):
         drag.setMimeData(mimedata)
 
         drag.exec_(Qt.MoveAction)
+
 
 def my_import(name):
     components = name.split('.')
