@@ -1,6 +1,9 @@
 from threading import Thread
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QComboBox, QLabel
-from Backend.Backend import ScanInterfaces, ConnectToCrazyflie, PlayAndSendSequence
+
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QKeySequence
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QComboBox, QLabel, QShortcut
+from Backend.Backend import ScanInterfaces, ConnectToCrazyflie, PlayAndSendSequence, KillSwitch
 from Backend.SequenceList import SequenceList
 
 class MenuBar(QWidget):
@@ -25,12 +28,22 @@ class MenuBar(QWidget):
         self.buttonPlay.clicked.connect(self.buttonPlayPressed)
         self.layout.addWidget(self.buttonPlay)
 
+        self.killswtichButton = QPushButton("Kill")
+        self.killswtichButton.clicked.connect(self.buttonKillPressed)
+        self.killswtichButton.setShortcut(QKeySequence(Qt.Key_Escape))
+        self.layout.addWidget(self.killswtichButton)
+
         self.connectedElement = QLabel()
         self.connectedElement.setText('not connected')
         self.layout.addWidget(self.connectedElement)
 
         self.setLayout(self.layout)
         self.scf = None
+
+    def buttonKillPressed(self):
+        if not self.scf:
+            return
+        KillSwitch()
 
     def buttonPlayPressed(self):
         if not self.scf:

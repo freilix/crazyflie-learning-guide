@@ -12,6 +12,10 @@ def ScanInterfaces():
     available = cflib.crtp.scan_interfaces()
     return available
 
+def KillSwitch():
+    GP.IsPositionSenderRunning = False
+    GP.IsPositionChangerRunning = False
+
 def ConnectToCrazyflie(interface):
     syncCrazyflie = SyncCrazyflie(interface)
     time.sleep(1)
