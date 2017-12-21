@@ -1,7 +1,7 @@
 from threading import Thread
 
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QComboBox
-from Backend.Backend import ScanInterfaces, ConnectToCrazyflie, SendCoordinatesToCrazyflie, ChangePositionCoordinates
+from Backend.Backend import ScanInterfaces, ConnectToCrazyflie, SendCoordinatesToCrazyflie, ChangePositionCoordinates, PlayAndSendSequence
 from Backend.SequenceList import SequenceList
 
 class MenuBar(QWidget):
@@ -28,6 +28,7 @@ class MenuBar(QWidget):
 
         self.setLayout(self.layout)
         self.playing = False
+        self.scf = None
 
     def buttonPlayPressed(self):
         if (not self.scf) or self.playing:
@@ -40,16 +41,27 @@ class MenuBar(QWidget):
             c = playground.layout.itemAt(i).widget()
             element = c.play()
             list.add(element)
-        ChangePositionCoordinates(list)
-        SendCoordinatesToCrazyflie(self.scf)
+
+        backendThread = Thread(target=PlayAndSendSequence, args=(self.scf, list,))
+        backendThread.start()
+
+        # PlayAndSendSequence(self.scf, list)
+        # ChangePositionCoordinates(list)
+        # SendCoordinatesToCrazyflie(self.scf)
         self.playing = True
 
+        # threadListRunner.start()
+        #threadGlobalPosition.start()
+        #check = Thread(target=self.checkIfThreadFinished, args=(threadListRunner, threadGlobalPosition,))
+        #check.start()
+
+
     def buttonConnectPressed(self):
-        if self.scf:
-            pass
         currentAdress = self.comboBoxAdresses.currentText()
-        if currentAdress.isspace():
-            self.scf = ConnectToCrazyflie(currentAdress)
+        #if currentAdress.isspace():
+        if self.scf:
+            return
+        self.scf = ConnectToCrazyflie(currentAdress) # todo own thread
 
     def buttonSearchPressed(self):
         threadGlobalPosition = Thread(target=self.SetComboBoxAdresses, args=())
@@ -57,5 +69,11 @@ class MenuBar(QWidget):
 
     def SetComboBoxAdresses(self):
         available = ScanInterfaces()
-        if available:
-            self.comboBoxAdresses.addItem(available[0][0]) #todo: iterate over complete list
+        if available: # todo and self.comboBoxAdresses.count() > 0:
+            self.comboBoxAdresses.addItem(available[0][0])
+
+    def checkIfThreadFinished(self, threadListRunner, threadGlobalPosition):
+        while threadListRunner.is_alive():
+            pass
+        threadGlobalPosition._stop()
+        self.playing = False

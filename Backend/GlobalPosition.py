@@ -3,3 +3,5 @@ class GlobalPosition:
     PositionY = 0
     PositionZ = 0
     PositionYaw = 0
+    IsPositionChangerRunning = False
+    IsPositionSenderRunning = False

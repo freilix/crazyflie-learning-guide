@@ -48,7 +48,7 @@ class IncXWidget(ElementWidget):
         self.layout.addWidget(self.spinboxX)
 
     def play(self):
-        return IncrementXElement(self.spinboxX.value)
+        return IncrementXElement(self.spinboxX.value())
 
 
 class IncYWidget(ElementWidget):
@@ -64,7 +64,7 @@ class IncYWidget(ElementWidget):
         self.layout.addWidget(self.spinboxY)
 
     def play(self):
-        return IncrementYElement(self.spinboxY.value)
+        return IncrementYElement(self.spinboxY.value())
 
 
 class IncZWidget(ElementWidget):
@@ -80,7 +80,7 @@ class IncZWidget(ElementWidget):
         self.layout.addWidget(self.spinboxZ)
 
     def play(self):
-        return IncrementZElement(self.spinboxZ.value)
+        return IncrementZElement(self.spinboxZ.value())
 
 
 class IncYawWidget(ElementWidget):
@@ -96,7 +96,7 @@ class IncYawWidget(ElementWidget):
         self.layout.addWidget(self.spinboxYaw)
 
     def play(self):
-        return IncrementYawElement(self.spinboxYaw.value)
+        return IncrementYawElement(self.spinboxYaw.value())
 
 
 class PosSetWidget(ElementWidget):
@@ -141,7 +141,7 @@ class PosSetWidget(ElementWidget):
         self.layout.addWidget(self.spinboxYaw)
 
     def play(self):
-        return PositionMoverElement(self.spinboxX.value, self.spinboxY.value, self.spinboxZ.value, self.spinboxYaw.value)
+        return PositionMoverElement(self.spinboxX.value(), self.spinboxY.value(), self.spinboxZ.value(), self.spinboxYaw.value())
 
 
 class LandWidget(ElementWidget):
@@ -179,7 +179,7 @@ class LoopWidget(ElementWidget):
             c = playground.layout.itemAt(i).widget()
             element = c.play()
             list.add(element)
-        return LoopElement(self.forSpinbox.value, list)
+        return LoopElement(self.forSpinbox.value(), list)
 
     def setDefaultLayout(self):
         self.layout = QGridLayout()
