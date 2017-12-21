@@ -14,3 +14,4 @@ class LandingElement(Element):
             GP.PositionZ *= 0.95
             time.sleep(0.1)
         GP.PositionZ = 0
+        time.sleep(0.5)

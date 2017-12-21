@@ -27,13 +27,9 @@ class MenuBar(QWidget):
         self.layout.addWidget(self.buttonPlay)
 
         self.setLayout(self.layout)
-        self.playing = False
         self.scf = None
 
     def buttonPlayPressed(self):
-        if (not self.scf) or self.playing:
-            pass
-
         list = SequenceList()
         playground = self.mainWindow.playground
         count = playground.layout.count()
@@ -45,20 +41,8 @@ class MenuBar(QWidget):
         backendThread = Thread(target=PlayAndSendSequence, args=(self.scf, list,))
         backendThread.start()
 
-        # PlayAndSendSequence(self.scf, list)
-        # ChangePositionCoordinates(list)
-        # SendCoordinatesToCrazyflie(self.scf)
-        self.playing = True
-
-        # threadListRunner.start()
-        #threadGlobalPosition.start()
-        #check = Thread(target=self.checkIfThreadFinished, args=(threadListRunner, threadGlobalPosition,))
-        #check.start()
-
-
     def buttonConnectPressed(self):
         currentAdress = self.comboBoxAdresses.currentText()
-        #if currentAdress.isspace():
         if self.scf:
             return
         self.scf = ConnectToCrazyflie(currentAdress) # todo own thread
@@ -71,9 +55,3 @@ class MenuBar(QWidget):
         available = ScanInterfaces()
         if available: # todo and self.comboBoxAdresses.count() > 0:
             self.comboBoxAdresses.addItem(available[0][0])
-
-    def checkIfThreadFinished(self, threadListRunner, threadGlobalPosition):
-        while threadListRunner.is_alive():
-            pass
-        threadGlobalPosition._stop()
-        self.playing = False
