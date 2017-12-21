@@ -15,6 +15,7 @@ class MainWindow(QMainWindow):
         self.toolbox = ToolBox()
         self.menuBar = MenuBar(self)
         self.trash = TrashWidget()
+        self.setWindowTitle("Crazyflie flight")
 
         # setup layout
         mainWidget = QWidget()
