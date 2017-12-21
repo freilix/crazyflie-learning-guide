@@ -1,7 +1,6 @@
 from threading import Thread
-
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QComboBox
-from Backend.Backend import ScanInterfaces, ConnectToCrazyflie, SendCoordinatesToCrazyflie, ChangePositionCoordinates, PlayAndSendSequence
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QComboBox, QLabel
+from Backend.Backend import ScanInterfaces, ConnectToCrazyflie, PlayAndSendSequence
 from Backend.SequenceList import SequenceList
 
 class MenuBar(QWidget):
@@ -26,10 +25,17 @@ class MenuBar(QWidget):
         self.buttonPlay.clicked.connect(self.buttonPlayPressed)
         self.layout.addWidget(self.buttonPlay)
 
+        self.connectedElement = QLabel()
+        self.connectedElement.setText('not connected')
+        self.layout.addWidget(self.connectedElement)
+
         self.setLayout(self.layout)
         self.scf = None
 
     def buttonPlayPressed(self):
+        if not self.scf:
+            return
+
         list = SequenceList()
         playground = self.mainWindow.playground
         count = playground.layout.count()
@@ -42,16 +48,29 @@ class MenuBar(QWidget):
         backendThread.start()
 
     def buttonConnectPressed(self):
+        def crazyflie_connection_lost(aa, a):
+            self.scf = None
+            self.connectedElement.setText('not connected')
+
         currentAdress = self.comboBoxAdresses.currentText()
-        if self.scf:
+        if self.scf or not currentAdress:
             return
-        self.scf = ConnectToCrazyflie(currentAdress) # todo own thread
+        self.scf = ConnectToCrazyflie(currentAdress)
+        self.scf.cf.connection_lost.add_callback(crazyflie_connection_lost)
+        self.connectedElement.setText('connected')
 
     def buttonSearchPressed(self):
         threadGlobalPosition = Thread(target=self.SetComboBoxAdresses, args=())
         threadGlobalPosition.start()
 
     def SetComboBoxAdresses(self):
-        available = ScanInterfaces()
-        if available: # todo and self.comboBoxAdresses.count() > 0:
-            self.comboBoxAdresses.addItem(available[0][0])
+        self.comboBoxAdresses.clear()
+        interfaces = ScanInterfaces()
+        formatted_interfaces = []
+        for i in interfaces:
+            if len(i[1]) > 0:
+                interface = "%s - %s" % (i[0], i[1])
+            else:
+                interface = i[0]
+            formatted_interfaces.append(interface)
+        self.comboBoxAdresses.addItems(formatted_interfaces)
