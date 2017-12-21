@@ -40,6 +40,8 @@ class PlayGround(QWidget):
         self.spaceElement = QWidget(self)
         self.spaceElement.setFixedHeight(10)
 
+        self.dragStartPosition = None
+
     def insertElementWidget(self, index, element):
         self.layout.insertWidget(index, element)
         pass
@@ -47,7 +49,6 @@ class PlayGround(QWidget):
     def dragEnterEvent(self, event):
         mime = event.mimeData()
         if mime.hasFormat(ElementMimeType) and not isDraggedElementSuperElement(self):
-            #self.updateDropPosition(event.pos())
             event.accept()
         else:
             event.ignore()
@@ -87,11 +88,12 @@ class PlayGround(QWidget):
         mime = event.mimeData()
 
         if mime.hasFormat(ElementMimeType):
-            self.insertElementWidget(self.layout.indexOf(self.spaceElement), DraggedElement)
+            spaceIndex = self.layout.indexOf(self.spaceElement)
             self.layout.removeWidget(self.spaceElement)
-
+            self.insertElementWidget(spaceIndex, DraggedElement)
             Frontend.PlayGround.DraggedElement = None
             self.update()
+
             event.setDropAction(Qt.MoveAction)
             event.accept()
         else:
@@ -121,22 +123,27 @@ class PlayGround(QWidget):
 
         if index == -1:
             index = self.layout.count()
-
         return index
+
+    def mouseMoveEvent(self, event):
+        if self.dragStartPosition is not None:
+            childAtPos = self.childAt(self.dragStartPosition)
+            parentElementWidget = self.getParentElementWidget(childAtPos)
+            if issubclass(type(parentElementWidget), ElementWidget):
+                drag = QDrag(self);
+                mimeData = QMimeData();
+                mimeData.setData(ElementMimeType, QByteArray())
+                Frontend.PlayGround.DraggedElement = parentElementWidget
+                self.dragStartPosition = None
+                drag.setMimeData(mimeData);
+
+                drag.exec_(Qt.MoveAction)
 
     def mousePressEvent(self, event):
         childAtPos = self.childAt(event.pos())
-
         parentElementWidget = self.getParentElementWidget(childAtPos)
-
         if event.button() == Qt.LeftButton and issubclass(type(parentElementWidget), ElementWidget):
-            drag = QDrag(self);
-            mimeData = QMimeData();
-            mimeData.setData(ElementMimeType, QByteArray())
-            Frontend.PlayGround.DraggedElement = parentElementWidget
-            drag.setMimeData(mimeData);
-
-            drag.exec_(Qt.MoveAction)
+            self.dragStartPosition = event.pos()
 
     def getParentElementWidget(self, child):
         if child is None:

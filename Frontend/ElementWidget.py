@@ -1,12 +1,12 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPainter, QColor
-from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QSpinBox, QDoubleSpinBox, QGridLayout, QLayout
-from copy import deepcopy
 import abc
+
+from PyQt5.QtGui import QPainter, QColor
+from PyQt5.QtWidgets import QWidget, QLabel, QHBoxLayout, QSpinBox, QDoubleSpinBox, QGridLayout
+
 from Backend.Elements.IncrementXElement import IncrementXElement
 from Backend.Elements.IncrementYElement import IncrementYElement
-from Backend.Elements.IncrementZElement import IncrementZElement
 from Backend.Elements.IncrementYawElement import IncrementYawElement
+from Backend.Elements.IncrementZElement import IncrementZElement
 from Backend.Elements.LandingElement import LandingElement
 from Backend.Elements.LoopElement import LoopElement
 from Backend.Elements.PositionMoverElement import PositionMoverElement
@@ -21,7 +21,6 @@ class ElementWidget(QWidget):
         self.setDefaultLayout()
         self.setLayout(self.layout)
 
-
     def setDefaultLayout(self):
         self.layout = QHBoxLayout()
 
@@ -34,6 +33,7 @@ class ElementWidget(QWidget):
     @abc.abstractmethod
     def play(self):
         raise NotImplementedError("abstract method")
+
 
 class IncXWidget(ElementWidget):
     def __init__(self):
@@ -141,7 +141,8 @@ class PosSetWidget(ElementWidget):
         self.layout.addWidget(self.spinboxYaw)
 
     def play(self):
-        return PositionMoverElement(self.spinboxX.value(), self.spinboxY.value(), self.spinboxZ.value(), self.spinboxYaw.value())
+        return PositionMoverElement(self.spinboxX.value(), self.spinboxY.value(), self.spinboxZ.value(),
+                                    self.spinboxYaw.value())
 
 
 class LandWidget(ElementWidget):
@@ -166,7 +167,6 @@ class LoopWidget(ElementWidget):
         self.forSpinbox = QSpinBox()
         self.forSpinbox.setMinimum(1)
 
-
         self.layout.addWidget(self.innerPlayground, 1, 0, 1, 2)
         self.layout.addWidget(self.label, 0, 0)
         self.layout.addWidget(self.forSpinbox, 0, 1)
@@ -183,4 +183,3 @@ class LoopWidget(ElementWidget):
 
     def setDefaultLayout(self):
         self.layout = QGridLayout()
-
