@@ -1,7 +1,7 @@
 from threading import Thread
 
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QPushButton, QComboBox
-from Backend.Backend import ScanInterfaces, ConnectToCrazyflie
+from Backend.Backend import ScanInterfaces, ConnectToCrazyflie, SendCoordinatesToCrazyflie, ChangePositionCoordinates
 from Backend.SequenceList import SequenceList
 
 class MenuBar(QWidget):
@@ -27,8 +27,12 @@ class MenuBar(QWidget):
         self.layout.addWidget(self.buttonPlay)
 
         self.setLayout(self.layout)
+        self.playing = False
 
     def buttonPlayPressed(self):
+        if (not self.scf) or self.playing:
+            pass
+
         list = SequenceList()
         playground = self.mainWindow.playground
         count = playground.layout.count()
@@ -36,11 +40,16 @@ class MenuBar(QWidget):
             c = playground.layout.itemAt(i).widget()
             element = c.play()
             list.add(element)
+        ChangePositionCoordinates(list)
+        SendCoordinatesToCrazyflie(self.scf)
+        self.playing = True
 
     def buttonConnectPressed(self):
+        if self.scf:
+            pass
         currentAdress = self.comboBoxAdresses.currentText()
         if currentAdress.isspace():
-            ConnectToCrazyflie(currentAdress)
+            self.scf = ConnectToCrazyflie(currentAdress)
 
     def buttonSearchPressed(self):
         threadGlobalPosition = Thread(target=self.SetComboBoxAdresses, args=())

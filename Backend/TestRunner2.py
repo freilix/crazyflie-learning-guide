@@ -10,6 +10,7 @@ from Backend.Elements.IncrementYawElement import IncrementYawElement
 from Backend.ResetEstimator import ResetEstimator
 from Backend.SequenceList import SequenceList
 from cflib.crazyflie.syncCrazyflie import SyncCrazyflie
+from cflib.crazyflie.log import LogConfig
 from Backend.GlobalPosition import GlobalPosition as GP
 from threading import Thread
 
@@ -25,6 +26,22 @@ class TestRunner():
     def runList(list):
         print("thread")
         list.run(1)
+
+    def position_callback(timestamp, data, logconf):
+        x = data['kalman.stateX']
+        y = data['kalman.stateY']
+        z = data['kalman.stateZ']
+        print('pos: ({}, {}, {})'.format(x, y, z))
+
+    def start_position_printing(self, scf):
+        log_conf = LogConfig(name='Position', period_in_ms=400)
+        log_conf.add_variable('kalman.stateX', 'float')
+        log_conf.add_variable('kalman.stateY', 'float')
+        log_conf.add_variable('kalman.stateZ', 'float')
+
+        scf.cf.log.add_config(log_conf)
+        log_conf.data_received_cb.add_callback(self.position_callback)
+        log_conf.start()
 
     print("start")
 
@@ -68,6 +85,9 @@ class TestRunner():
     time.sleep(1)
     syncCrazyflie.open_link()
     ResetEstimator.reset_estimator(syncCrazyflie)
+
+    start_position_printing(syncCrazyflie)
+
     syncCrazyflie.cf.param.set_value('flightmode.posSet', '1')
 
     threadListRunner = Thread(target=runList, args=(testList, ))
