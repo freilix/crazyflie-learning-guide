@@ -102,7 +102,7 @@ class PlayGround(QWidget):
     def paintEvent(self, event):
         painter = QPainter()
         painter.begin(self)
-        painter.fillRect(event.rect(), Qt.white)
+        painter.fillRect(event.rect(), Qt.darkGray)
         painter.end()
 
     def calcInsertionIndex(self, pos):

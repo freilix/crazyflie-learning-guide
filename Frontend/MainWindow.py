@@ -20,14 +20,14 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Crazyflie flight")
 
         self.scrollArea = QScrollArea()
-        self.scrollArea.setBackgroundRole(QPalette.Dark)
         self.scrollArea.setWidgetResizable(True)
+        self.scrollArea.frameStyle()
         self.scrollArea.setWidget(self.playground)
 
         # setup layout
         mainWidget = QWidget()
         layout = QGridLayout(mainWidget)
-
+        layout.setContentsMargins(10,10,10,10)
         layout.addWidget(self.menuBar, 0, 0, 1, 2)
         layout.addWidget(self.toolbox, 1, 0)
         layout.addWidget(self.trash, 2, 0)

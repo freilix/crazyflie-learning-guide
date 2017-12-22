@@ -21,6 +21,7 @@ class ElementWidget(QWidget):
         self.setDefaultLayout()
         self.setLayout(self.layout)
 
+
     def setDefaultLayout(self):
         self.layout = QHBoxLayout()
 
@@ -159,7 +160,7 @@ class LandWidget(ElementWidget):
 class LoopWidget(ElementWidget):
     def __init__(self):
         super().__init__()
-        self.BackgroundColor = '#AAAAAA'
+        self.BackgroundColor = '#BBBBBB'
         from Frontend.PlayGround import PlayGround
         self.innerPlayground = PlayGround()
 
