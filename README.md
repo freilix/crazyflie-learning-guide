@@ -21,6 +21,7 @@ The communication to the crazyflie is based on [cflib](www.github.com/bitcraze/c
 cflib is an API written in Python that is used to communicate with Crazyflie
 and Crazyflie 2.0 quadcopters. It is intended to be used by client software to
 communicate with and control a Crazyflie quadcopter.
+The user interface was developt with elements of the python ui framework [PyQt5](www.riverbankcomputing.com/software/pyqt/intro). 
 
 ## Acknowledgments
 This software was developt as part of the course "Autonomous mobile systems" at the University of Applied Sciences in Darmstadt Germany.
